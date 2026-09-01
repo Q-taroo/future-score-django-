@@ -4,6 +4,7 @@ Django settings for FUTURE SCORE.
 
 import os
 from pathlib import Path
+from urllib.parse import unquote, urlparse
 
 from dotenv import load_dotenv
 
@@ -77,19 +78,33 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 # --- Database ------------------------------------------------------------------
-# psycopg3 (native Python, C-accelerated build available as psycopg[binary]) —
-# no Rust/native ORM engine binary dependency to fetch at build/deploy time.
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("DB_NAME", "futurescore"),
-        "USER": os.environ.get("DB_USER", "futurescore"),
-        "PASSWORD": os.environ.get("DB_PASSWORD", "futurescore"),
-        "HOST": os.environ.get("DB_HOST", "localhost"),
-        "PORT": os.environ.get("DB_PORT", "5432"),
-        "CONN_MAX_AGE": 60,
+# Render supplies PostgreSQL credentials as one internal connection URL.
+database_url = os.environ.get("DATABASE_URL")
+if database_url:
+    parsed_database_url = urlparse(database_url)
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": parsed_database_url.path.lstrip("/"),
+            "USER": unquote(parsed_database_url.username or ""),
+            "PASSWORD": unquote(parsed_database_url.password or ""),
+            "HOST": parsed_database_url.hostname or "localhost",
+            "PORT": str(parsed_database_url.port or 5432),
+            "CONN_MAX_AGE": 60,
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.environ.get("DB_NAME", "futurescore"),
+            "USER": os.environ.get("DB_USER", "futurescore"),
+            "PASSWORD": os.environ.get("DB_PASSWORD", "futurescore"),
+            "HOST": os.environ.get("DB_HOST", "localhost"),
+            "PORT": os.environ.get("DB_PORT", "5432"),
+            "CONN_MAX_AGE": 60,
+        }
+    }
 
 AUTH_USER_MODEL = "accounts.User"
 
