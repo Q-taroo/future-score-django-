@@ -1,0 +1,36 @@
+{% load static %}
+{% if not is_open %}
+  <p class="empty-state">この予測は締切を過ぎているため、新しい予測は受け付けていません。</p>
+{% else %}
+  <div id="vote-panel" data-vote-url="{% url 'predictions:vote' prediction.slug %}"
+       data-selected="{{ my_vote.selected_option|default:'' }}" data-confidence="{{ my_vote.confidence|default:'' }}">
+    <div class="grid grid-2" style="gap:.75rem">
+      <button type="button" class="btn btn-outline btn-lg js-vote-btn" data-option="YES" style="height:3.5rem; font-size:1.125rem">
+        {{ prediction.option_a }}
+      </button>
+      <button type="button" class="btn btn-outline btn-lg js-vote-btn" data-option="NO" style="height:3.5rem; font-size:1.125rem">
+        {{ prediction.option_b }}
+      </button>
+    </div>
+
+    <div class="card mt-3" style="padding:.75rem">
+      <label class="field-checkbox">
+        <input type="checkbox" id="use-confidence" {% if my_vote.confidence %}checked{% endif %} />
+        自信度を入力する（任意）
+      </label>
+      <div id="confidence-row" class="flex items-center mt-3" style="gap:.75rem; {% if not my_vote.confidence %}display:none{% endif %}">
+        <input type="range" min="50" max="100" id="confidence-range" value="{{ my_vote.confidence|default:70 }}" style="width:100%" />
+        <span id="confidence-value" style="width:3.5rem; text-align:right; font-weight:700; font-size:.875rem">{{ my_vote.confidence|default:70 }}%</span>
+      </div>
+    </div>
+
+    <p id="vote-status" class="text-center text-xs text-muted mt-3">
+      {% if my_vote %}
+        現在の予測: <strong>{% if my_vote.selected_option == 'YES' %}{{ prediction.option_a }}{% else %}{{ prediction.option_b }}{% endif %}</strong>
+        — 締切前であれば変更できます
+      {% endif %}
+    </p>
+  </div>
+
+  <script src="{% static 'js/vote.js' %}"></script>
+{% endif %}

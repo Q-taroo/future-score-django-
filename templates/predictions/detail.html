@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% load prediction_extras %}
+{% block title %}{{ prediction.title }} | {{ APP_NAME }}{% endblock %}
+{% block description %}{{ prediction.description|truncatechars:120 }}{% endblock %}
+{% block content %}
+<div class="container-sm py-8" style="max-width:42rem">
+  <div class="flex items-center gap-2 mb-4">
+    <span class="badge badge-outline">{{ prediction.category|category_label }}</span>
+    <span class="badge {% if prediction.status == 'OPEN' %}badge-success{% else %}badge-muted{% endif %}">{{ prediction.status|status_label }}</span>
+    {% if prediction.status == 'RESOLVED' and prediction.correct_option %}
+      <span class="badge {% if prediction.correct_option == 'YES' %}badge-yes{% else %}badge-no{% endif %}">結果: {{ prediction.correct_option }}</span>
+    {% endif %}
+  </div>
+
+  <h1 class="font-bold leading-snug" style="font-size:1.5rem">{{ prediction.title }}</h1>
+  <p class="text-sm text-muted mt-3" style="white-space:pre-line">{{ prediction.description }}</p>
+
+  <div class="flex text-xs text-muted mt-3" style="gap:1.5rem; flex-wrap:wrap">
+    <span>締切: {{ prediction.deadline|date:"Y-m-d H:i" }}</span>
+    <span>参加人数: {{ prediction.participant_count }}人</span>
+    {% if prediction.source_url %}<a href="{{ prediction.source_url }}" target="_blank" rel="noopener noreferrer" class="text-primary">出典を見る</a>{% endif %}
+  </div>
+
+  <div class="grid sm:grid-2 mt-8">
+    <div class="card" style="padding:1rem">
+      <p class="text-xs font-bold text-muted mb-2" style="text-transform:uppercase">AI予測</p>
+      {% if ai %}
+        <div class="flex items-center justify-between">
+          <span class="text-2xl font-black text-yes">YES {{ ai.yes_probability|percent }}</span>
+          <span class="text-lg font-bold text-no">NO {{ ai.no_probability|percent }}</span>
+        </div>
+        <div class="split-bar mt-2">
+          <div class="yes" style="width:{{ ai.yes_probability|mul100 }}%"></div>
+          <div class="no" style="width:{{ ai.no_probability|mul100 }}%"></div>
+        </div>
+        <p class="text-xs text-muted mt-3">{{ ai.reasoning_summary }}</p>
+        <p class="text-xs text-muted mt-2" style="font-size:.625rem">provider: {{ ai.provider }} / model: {{ ai.model }}</p>
+      {% else %}
+        <p class="text-sm text-muted">AI予測はまだありません</p>
+      {% endif %}
+    </div>
+
+    <div class="card" style="padding:1rem">
+      <p class="text-xs font-bold text-muted mb-2" style="text-transform:uppercase">ユーザー予測</p>
+      <div class="flex items-center justify-between">
+        <span class="text-2xl font-black text-yes">YES {{ split.yes_percent|floatformat:0 }}%</span>
+        <span class="text-lg font-bold text-no">NO {{ split.no_percent|floatformat:0 }}%</span>
+      </div>
+      <div class="split-bar mt-2">
+        <div class="yes" style="width:{{ split.yes_percent }}%"></div>
+        <div class="no" style="width:{{ split.no_percent }}%"></div>
+      </div>
+      <p class="text-xs text-muted mt-3">{{ split.total }}人が予測に参加</p>
+      {% if opinion %}
+        <p class="text-xs text-muted mt-3" style="border-top:1px solid var(--border); padding-top:.75rem">
+          世論シグナル ({{ opinion.source }}): YES {{ opinion.yes_probability|percent }} ・ サンプル数 {{ opinion.sample_size }}
+        </p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="mt-8">
+    <h2 class="text-lg font-bold mb-3">あなたの予測</h2>
+    {% if user.is_authenticated %}
+      {% include "predictions/_vote_panel.html" %}
+    {% else %}
+      <div class="card text-center" style="padding:2rem">
+        <p class="text-sm text-muted">予測に参加するにはログインが必要です</p>
+        <a href="{% url 'accounts:login' %}" class="font-semibold text-primary mt-2" style="display:inline-block">ログイン / 新規登録はこちら</a>
+      </div>
+    {% endif %}
+  </div>
+
+  <p class="text-center mt-6" style="font-size:.6875rem; color:var(--muted); line-height:1.5">
+    本予測は情報提供・エンターテインメント目的の分析であり、投資助言ではありません。
+    金銭の授受や換金可能な報酬は発生しません。
+  </p>
+</div>
+{% endblock %}

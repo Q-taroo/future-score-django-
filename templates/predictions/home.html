@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load prediction_extras %}
+{% block content %}
+<section class="hero">
+  <div class="container text-center py-14">
+    <p class="font-semibold text-primary text-sm mb-3">「AIより未来を当てられるか？」</p>
+    <h1 class="font-black" style="font-size:2rem; line-height:1.2">未来を予測して、<br>AIと競おう。</h1>
+    <p class="text-sm text-muted mt-4" style="max-width:36rem; margin-left:auto; margin-right:auto">
+      金融政策、為替、株式市場…未来のイベントについてAI・世論とあなたの予測を比較。
+      結果確定後の的中率で、あなたの予測力を測定・ランキングします。
+    </p>
+    <div class="flex items-center justify-center gap-3 mt-6">
+      <a href="{% url 'predictions:list' %}" class="btn btn-primary btn-lg">予測する</a>
+      <a href="{% url 'scoring:ranking' %}" class="btn btn-outline btn-lg">ランキングを見る</a>
+    </div>
+    <p class="text-xs text-muted mt-4">
+      ※ FUTURE SCOREは予測・情報分析サービスです。投資助言や金銭を賭ける機能は提供していません。
+    </p>
+  </div>
+</section>
+
+<section class="container py-8">
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="text-xl font-bold">今日の注目予測</h2>
+    <a href="{% url 'predictions:list' %}" class="text-sm font-medium text-primary">すべて見る →</a>
+  </div>
+  <div class="grid sm:grid-3">
+    {% for prediction in predictions %}
+      {% include "partials/prediction_card.html" %}
+    {% empty %}
+      <p class="empty-state">現在表示できる予測がありません。</p>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="container" style="padding-bottom:4rem">
+  <h2 class="text-xl font-bold mb-4">カテゴリー</h2>
+  <div class="flex" style="flex-wrap:wrap; gap:.5rem">
+    {% for c in categories %}
+      <a href="{% url 'predictions:list' %}?category={{ c.value }}" class="pill">{{ c.label }}</a>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

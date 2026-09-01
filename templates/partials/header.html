@@ -1,0 +1,23 @@
+<header class="site-header sticky-top">
+  <div class="container flex items-center justify-between" style="height:3.5rem">
+    <a href="{% url 'predictions:home' %}" class="brand flex items-center gap-1">
+      <span class="accent">FUTURE</span><span>SCORE</span>
+    </a>
+    <nav class="flex items-center gap-4" style="font-size:.8125rem">
+      <a href="{% url 'predictions:list' %}">予測一覧</a>
+      <a href="{% url 'scoring:ranking' %}">ランキング</a>
+      {% if user.is_authenticated %}<a href="{% url 'scoring:me_dashboard' %}">マイページ</a>{% endif %}
+      {% if user.is_authenticated and user.is_admin %}<a href="{% url 'adminpanel:dashboard' %}">管理画面</a>{% endif %}
+    </nav>
+    <div class="flex items-center gap-2">
+      {% if user.is_authenticated %}
+        <form method="post" action="{% url 'accounts:logout' %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-outline btn-sm">ログアウト</button>
+        </form>
+      {% else %}
+        <a href="{% url 'accounts:login' %}" class="btn btn-primary btn-sm">ログイン</a>
+      {% endif %}
+    </div>
+  </div>
+</header>

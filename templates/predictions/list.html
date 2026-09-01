@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load prediction_extras %}
+{% block title %}予測一覧 | {{ APP_NAME }}{% endblock %}
+{% block content %}
+<div class="container py-8">
+  <h1 class="text-2xl font-bold">予測一覧</h1>
+
+  <div class="flex overflow-x-auto mt-4" style="gap:.5rem">
+    <a href="{% url 'predictions:list' %}" class="pill {% if not selected_category %}active{% endif %}">すべて</a>
+    {% for c in categories %}
+      <a href="?category={{ c.value }}" class="pill {% if selected_category == c.value %}active{% endif %}">{{ c.label }}</a>
+    {% endfor %}
+  </div>
+
+  <div class="flex mt-4" style="gap:.5rem">
+    {% for s, label in status_labels %}
+      <a href="?{% if selected_category %}category={{ selected_category }}&{% endif %}status={{ s }}" class="pill-solid {% if selected_status == s %}active{% endif %}">{{ label }}</a>
+    {% endfor %}
+  </div>
+
+  <div class="grid sm:grid-3 mt-6">
+    {% for prediction in predictions %}
+      {% include "partials/prediction_card.html" %}
+    {% empty %}
+      <p class="empty-state">該当する予測がありません。</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

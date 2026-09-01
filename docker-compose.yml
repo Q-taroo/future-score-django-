@@ -1,0 +1,42 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: futurescore
+      POSTGRES_USER: futurescore
+      POSTGRES_PASSWORD: futurescore
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U futurescore"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  web:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DJANGO_DEBUG: "False"
+      DJANGO_SECRET_KEY: change-me-in-production
+      ALLOWED_HOSTS: "localhost,127.0.0.1"
+      DB_NAME: futurescore
+      DB_USER: futurescore
+      DB_PASSWORD: futurescore
+      DB_HOST: db
+      DB_PORT: "5432"
+      AI_PROVIDER: MOCK
+    ports:
+      - "8000:8000"
+    command: >
+      sh -c "python manage.py migrate --noinput &&
+             gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 3"
+
+volumes:
+  db_data:

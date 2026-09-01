@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% load prediction_extras %}
+{% block title %}管理画面 | {{ APP_NAME }}{% endblock %}
+{% block content %}
+<div class="container-wide py-8">
+  <h1 class="text-2xl font-bold">管理画面</h1>
+
+  <div class="tabs mt-4">
+    <a href="?tab=kpi" class="{% if tab == 'kpi' %}active{% endif %}">KPI</a>
+    <a href="?tab=predictions" class="{% if tab == 'predictions' %}active{% endif %}">予測管理</a>
+    <a href="?tab=create" class="{% if tab == 'create' %}active{% endif %}">予測作成</a>
+    <a href="?tab=users" class="{% if tab == 'users' %}active{% endif %}">ユーザー管理</a>
+    <a href="?tab=signals" class="{% if tab == 'signals' %}active{% endif %}">AI・世論シグナル</a>
+    <a href="?tab=audit" class="{% if tab == 'audit' %}active{% endif %}">監査ログ</a>
+  </div>
+
+  <div class="mt-6">
+    {% if tab == "kpi" %}
+      <div class="grid sm:grid-3">
+        <div class="stat-card"><p class="text-xs text-muted">DAU</p><p class="text-xl font-black">{{ kpi.dau }}</p></div>
+        <div class="stat-card"><p class="text-xs text-muted">WAU</p><p class="text-xl font-black">{{ kpi.wau }}</p></div>
+        <div class="stat-card"><p class="text-xs text-muted">MAU</p><p class="text-xl font-black">{{ kpi.mau }}</p></div>
+        <div class="stat-card"><p class="text-xs text-muted">総ユーザー数</p><p class="text-xl font-black">{{ kpi.total_users }}</p></div>
+        <div class="stat-card"><p class="text-xs text-muted">総投票数</p><p class="text-xl font-black">{{ kpi.total_votes }}</p></div>
+        <div class="stat-card"><p class="text-xs text-muted">総予測数</p><p class="text-xl font-black">{{ kpi.total_predictions }}</p></div>
+        <div class="stat-card"><p class="text-xs text-muted">確定済み予測</p><p class="text-xl font-black">{{ kpi.resolved_predictions }}</p></div>
+        <div class="stat-card"><p class="text-xs text-muted">完了率</p><p class="text-xl font-black">{{ kpi.completion_rate|percent }}</p></div>
+        <div class="stat-card"><p class="text-xs text-muted">7日リテンション</p><p class="text-xl font-black">{{ kpi.retention_7d|percent }}</p></div>
+        <div class="stat-card"><p class="text-xs text-muted">30日リテンション</p><p class="text-xl font-black">{{ kpi.retention_30d|percent }}</p></div>
+      </div>
+
+      {% if kpi.votes_by_category %}
+        <h2 class="text-lg font-bold mt-8 mb-3">カテゴリー別投票数</h2>
+        <div class="card" style="padding:1rem">
+          {% for category, count in kpi.votes_by_category %}
+            <div class="flex items-center justify-between mt-1">
+              <span class="text-sm">{{ category|category_label }}</span>
+              <span class="text-sm font-semibold">{{ count }}</span>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+    {% elif tab == "predictions" %}
+      <div class="card" style="overflow:hidden">
+        {% for p in predictions %}
+          <div class="card-divide" style="padding:1rem">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="badge badge-outline">{{ p.category|category_label }}</span>
+                <span class="badge {% if p.status == 'OPEN' %}badge-success{% else %}badge-muted{% endif %}">{{ p.status|status_label }}</span>
+              </div>
+              <span class="text-xs text-muted">参加 {{ p.participant_count }}人 / 締切 {{ p.deadline|date:"Y-m-d H:i" }}</span>
+            </div>
+            <p class="font-semibold mt-2">{{ p.title }}</p>
+
+            <div class="flex items-center gap-2 mt-3" style="flex-wrap:wrap">
+              {% if p.status == "OPEN" or p.status == "CLOSED" %}
+                <form method="post" action="{% url 'adminpanel:resolve' p.id %}" class="flex items-center gap-2">
+                  {% csrf_token %}
+                  <select name="correct_option" style="height:2.25rem; border-radius:.5rem; border:1px solid var(--border); padding:0 .5rem">
+                    <option value="YES">{{ p.option_a }} (YES)</option>
+                    <option value="NO">{{ p.option_b }} (NO)</option>
+                  </select>
+                  <button type="submit" class="btn btn-primary btn-sm">結果を確定</button>
+                </form>
+                <form method="post" action="{% url 'adminpanel:cancel' p.id %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-outline btn-sm">キャンセル</button>
+                </form>
+              {% elif p.status == "RESOLVED" %}
+                <span class="badge {% if p.correct_option == 'YES' %}badge-yes{% else %}badge-no{% endif %}">結果: {{ p.correct_option }}</span>
+              {% endif %}
+              <a href="{% url 'predictions:detail' p.slug %}" class="text-xs text-primary">詳細を見る →</a>
+            </div>
+          </div>
+        {% empty %}
+          <p class="empty-state">予測がありません。</p>
+        {% endfor %}
+      </div>
+
+    {% elif tab == "create" %}
+      <form method="post" action="{% url 'adminpanel:create_prediction' %}" class="card" style="padding:1.5rem; max-width:36rem">
+        {% csrf_token %}
+        {% for field in form %}
+          <div class="field">
+            <label class="field-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}<p class="text-no" style="font-size:.75rem">{{ field.errors.0 }}</p>{% endif %}
+          </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary btn-lg mt-2">予測を作成する</button>
+      </form>
+
+    {% elif tab == "users" %}
+      <div class="card" style="overflow:hidden">
+        {% for u in users %}
+          <div class="flex items-center justify-between card-divide" style="padding:.75rem 1rem">
+            <div>
+              <span class="font-semibold">{{ u.username }}</span>
+              <span class="text-xs text-muted" style="margin-left:.5rem">{{ u.email }}</span>
+              {% if u.role == "ADMIN" %}<span class="badge badge-outline" style="margin-left:.5rem">管理者</span>{% endif %}
+              {% if not u.is_active %}<span class="badge badge-muted" style="margin-left:.5rem">停止中</span>{% endif %}
+            </div>
+            <div class="flex items-center gap-3">
+              {% if u.stats %}<span class="text-xs text-muted">{{ u.stats.prediction_score }}pt / {{ u.stats.rating }}</span>{% endif %}
+              {% if u.role != "ADMIN" %}
+                <form method="post" action="{% url 'adminpanel:toggle_user_active' u.id %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-outline btn-sm">{% if u.is_active %}停止{% else %}再開{% endif %}</button>
+                </form>
+              {% endif %}
+            </div>
+          </div>
+        {% empty %}
+          <p class="empty-state">ユーザーがいません。</p>
+        {% endfor %}
+      </div>
+
+    {% elif tab == "signals" %}
+      <h2 class="text-lg font-bold mb-3">AI予測</h2>
+      <div class="card" style="overflow:hidden">
+        {% for a in ai_predictions %}
+          <div class="flex items-center justify-between card-divide" style="padding:.75rem 1rem">
+            <a href="{% url 'predictions:detail' a.prediction.slug %}" class="text-sm">{{ a.prediction.title|truncatechars:40 }}</a>
+            <span class="text-xs text-muted">{{ a.provider }} / YES {{ a.yes_probability|percent }} / model: {{ a.model }}</span>
+          </div>
+        {% empty %}
+          <p class="empty-state">AI予測がありません。</p>
+        {% endfor %}
+      </div>
+
+      <h2 class="text-lg font-bold mt-8 mb-3">世論シグナル</h2>
+      <div class="card" style="overflow:hidden">
+        {% for o in opinion_signals %}
+          <div class="flex items-center justify-between card-divide" style="padding:.75rem 1rem">
+            <a href="{% url 'predictions:detail' o.prediction.slug %}" class="text-sm">{{ o.prediction.title|truncatechars:40 }}</a>
+            <span class="text-xs text-muted">{{ o.source }} / YES {{ o.yes_probability|percent }} / n={{ o.sample_size }}</span>
+          </div>
+        {% empty %}
+          <p class="empty-state">世論シグナルがありません。</p>
+        {% endfor %}
+      </div>
+
+    {% elif tab == "audit" %}
+      <div class="card" style="overflow:hidden">
+        {% for log in audit_logs %}
+          <div class="flex items-center justify-between card-divide" style="padding:.75rem 1rem">
+            <span class="text-sm">{{ log.action }} — {{ log.target_type }}#{{ log.target_id }}</span>
+            <span class="text-xs text-muted">{{ log.actor.username|default:"system" }} / {{ log.created_at|date:"Y-m-d H:i" }}</span>
+          </div>
+        {% empty %}
+          <p class="empty-state">監査ログがありません。</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

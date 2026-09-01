@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}新規登録 | {{ APP_NAME }}{% endblock %}
+{% block content %}
+<div class="container-sm py-14" style="max-width:24rem">
+  <h1 class="text-2xl font-bold text-center">新規登録</h1>
+  <p class="text-xs text-muted text-center mt-2">
+    FUTURE SCOREは予測・情報分析サービスです。登録・利用は無料で、金銭のやり取りは一切発生しません。
+  </p>
+
+  <form method="post" class="card mt-6" style="padding:1.5rem">
+    {% csrf_token %}
+    <div class="field">
+      <label class="field-label" for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+      {{ form.username }}
+      {% if form.username.errors %}<p class="text-no" style="font-size:.75rem">{{ form.username.errors.0 }}</p>{% endif %}
+    </div>
+    <div class="field">
+      <label class="field-label" for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+      {{ form.email }}
+      {% if form.email.errors %}<p class="text-no" style="font-size:.75rem">{{ form.email.errors.0 }}</p>{% endif %}
+    </div>
+    <div class="field">
+      <label class="field-label" for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+      {{ form.password }}
+      {% if form.password.errors %}<p class="text-no" style="font-size:.75rem">{{ form.password.errors.0 }}</p>{% endif %}
+    </div>
+    <button type="submit" class="btn btn-primary btn-lg mt-2" style="width:100%">登録する</button>
+  </form>
+
+  <p class="text-center text-sm text-muted mt-4">
+    すでにアカウントをお持ちの方は <a href="{% url 'accounts:login' %}" class="text-primary font-semibold">ログイン</a>
+  </p>
+</div>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% load prediction_extras %}
+{% block title %}{{ profile_user.username }} のプロフィール | {{ APP_NAME }}{% endblock %}
+{% block content %}
+<div class="container-sm py-8" style="max-width:40rem">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold">{{ profile_user.username }}</h1>
+      {% if profile_user.bio %}<p class="text-sm text-muted mt-1">{{ profile_user.bio }}</p>{% endif %}
+    </div>
+    {% if stats %}<span class="rank-badge gold" style="width:auto; padding:0 .75rem; border-radius:999px">{{ stats.rating }}</span>{% endif %}
+  </div>
+
+  {% if stats %}
+    <div class="grid sm:grid-3 mt-6">
+      <div class="stat-card">
+        <p class="text-xs text-muted">予測スコア</p>
+        <p class="text-xl font-black text-primary">{{ stats.prediction_score }}pt</p>
+      </div>
+      <div class="stat-card">
+        <p class="text-xs text-muted">的中率</p>
+        <p class="text-xl font-black">{{ stats.accuracy|percent }}</p>
+      </div>
+      <div class="stat-card">
+        <p class="text-xs text-muted">確定済み予測</p>
+        <p class="text-xl font-black">{{ stats.resolved_predictions }}件</p>
+      </div>
+      <div class="stat-card">
+        <p class="text-xs text-muted">現在の連続的中</p>
+        <p class="text-xl font-black">{{ stats.current_streak }}</p>
+      </div>
+      <div class="stat-card">
+        <p class="text-xs text-muted">最高連続的中</p>
+        <p class="text-xl font-black">{{ stats.best_streak }}</p>
+      </div>
+      <div class="stat-card">
+        <p class="text-xs text-muted">AIに勝った回数</p>
+        <p class="text-xl font-black">{{ stats.ai_beat_count }}</p>
+      </div>
+    </div>
+    {% if stats.overall_rank %}
+      <p class="text-sm text-muted mt-4 text-center">総合ランキング <strong class="text-primary">{{ stats.overall_rank }}位</strong></p>
+    {% endif %}
+  {% else %}
+    <p class="empty-state mt-6">まだ統計情報がありません。</p>
+  {% endif %}
+
+  <div class="mt-8">
+    <h2 class="text-lg font-bold mb-3">獲得バッジ</h2>
+    <div class="flex" style="flex-wrap:wrap; gap:.5rem">
+      {% for ub in badges %}
+        <span class="badge badge-outline" title="{{ ub.badge.description }}">{{ ub.badge.icon }} {{ ub.badge.name }}</span>
+      {% empty %}
+        <p class="empty-state">まだバッジがありません。</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="mt-8">
+    <h2 class="text-lg font-bold mb-3">最近の予測</h2>
+    <div class="card" style="overflow:hidden">
+      {% for h in history %}
+        <div class="flex items-center justify-between card-divide" style="padding:.75rem 1rem">
+          <a href="{% url 'predictions:detail' h.prediction.slug %}" class="text-sm" style="max-width:60%">{{ h.prediction.title|truncatechars:40 }}</a>
+          <div class="flex items-center gap-2 text-xs">
+            <span class="badge {% if h.selected_option == 'YES' %}badge-yes{% else %}badge-no{% endif %}">{{ h.selected_option }}</span>
+            {% if h.is_correct is not None %}
+              <span class="badge {% if h.is_correct %}badge-success{% else %}badge-muted{% endif %}">{% if h.is_correct %}的中{% else %}不的中{% endif %}</span>
+            {% endif %}
+          </div>
+        </div>
+      {% empty %}
+        <p class="empty-state">まだ予測履歴がありません。</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

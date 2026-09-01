@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}{{ APP_NAME }} | 未来を予測して、AIと競おう{% endblock %}</title>
+  <meta name="description" content="{% block description %}FUTURE SCOREは、金融・経済に関する未来の出来事をAI予測・ユーザー予測・世論シグナルと比較し、結果確定後に予測精度を測定する予測プラットフォームです。{% endblock %}" />
+  <meta property="og:title" content="{% block og_title %}{{ APP_NAME }}{% endblock %}" />
+  <meta property="og:description" content="{% block og_description %}{% endblock %}" />
+  <link rel="stylesheet" href="{% static 'css/app.css' %}" />
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  {% include "partials/header.html" %}
+
+  <main>
+    <div id="toast-region" class="toast-region"></div>
+    {% if messages %}
+      <div class="container" style="padding-top:1rem">
+        {% for message in messages %}
+          <div class="toast {% if message.tags == 'error' %}toast-error{% else %}toast-success{% endif %}" style="margin-bottom:.5rem">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer style="border-top:1px solid var(--border); padding: 2rem 1rem; text-align:center; font-size:.75rem; color:var(--muted)">
+    <p>
+      FUTURE SCOREは予測・情報分析サービスであり、投資助言を提供するものではありません。
+      金銭を賭ける機能や換金可能なポイントは一切提供していません。
+    </p>
+    <p style="margin-top:.25rem">&copy; {{ CURRENT_YEAR }} FUTURE SCORE</p>
+  </footer>
+
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

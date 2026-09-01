@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load prediction_extras %}
+{% block title %}ランキング | {{ APP_NAME }}{% endblock %}
+{% block content %}
+<div class="container-sm py-8" style="max-width:40rem">
+  <h1 class="text-2xl font-bold">ランキング</h1>
+  <p class="text-sm text-muted mt-2">
+    一定回数以上の予測を確定したユーザーのみ対象です（不正防止のため）。
+  </p>
+
+  <div class="flex overflow-x-auto mt-4" style="gap:.5rem">
+    {% for t in tabs %}
+      <a href="?tab={{ t.key }}" class="pill {% if active_tab.key == t.key %}active{% endif %}">{{ t.label }}</a>
+    {% endfor %}
+  </div>
+
+  <div class="card mt-6" style="overflow:hidden">
+    {% for row in rows %}
+      <div class="flex items-center justify-between card-divide" style="padding:.875rem 1rem">
+        <div class="flex items-center gap-3">
+          <span class="rank-badge {% if row.rank == 1 %}gold{% elif row.rank == 2 %}silver{% elif row.rank == 3 %}bronze{% endif %}">
+            {{ row.rank }}
+          </span>
+          <a href="{% url 'scoring:profile' row.username %}" class="font-semibold">{{ row.username }}</a>
+        </div>
+        <div class="flex items-center gap-4 text-sm">
+          {% if active_tab.category is None %}
+            <span class="text-muted">{{ row.rating }}</span>
+            <span class="text-muted">的中率 {{ row.accuracy|percent }}</span>
+            <span class="font-bold text-primary">{{ row.prediction_score }}pt</span>
+          {% else %}
+            <span class="text-muted">{{ row.correct }}/{{ row.resolved }}件</span>
+            <span class="font-bold text-primary">的中率 {{ row.accuracy|percent }}</span>
+          {% endif %}
+        </div>
+      </div>
+    {% empty %}
+      <p class="empty-state">まだランキング対象のユーザーがいません。</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

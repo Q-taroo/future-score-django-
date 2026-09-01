@@ -1,0 +1,32 @@
+{% load prediction_extras %}
+<a href="{% url 'predictions:detail' prediction.slug %}" class="card card-hover" style="display:block; height:100%">
+  <div style="padding:1rem">
+    <div class="flex items-center justify-between">
+      <span class="badge badge-outline">{{ prediction.category|category_label }}</span>
+      <span class="badge {% if prediction.status == 'OPEN' %}badge-success{% else %}badge-muted{% endif %}">{{ prediction.status|status_label }}</span>
+    </div>
+    <h3 class="font-bold leading-snug mt-2" style="font-size:1rem">{{ prediction.title }}</h3>
+  </div>
+  <div style="padding:0 1rem 1rem 1rem">
+    {% with ai=prediction.ai_predictions.all|first split=splits|get_item:prediction.id %}
+      <div class="flex items-center justify-between text-xs text-muted">
+        <span>AI予測 (YES {% if ai %}{{ ai.yes_probability|percent }}{% else %}—{% endif %})</span>
+        <span>ユーザー予測 (YES {{ split.yes_percent|floatformat:0 }}%)</span>
+      </div>
+      {% if ai %}
+      <div class="split-bar mt-1">
+        <div class="yes" style="width:{{ ai.yes_probability|mul100 }}%"></div>
+        <div class="no" style="width:{{ ai.no_probability|mul100 }}%"></div>
+      </div>
+      {% endif %}
+      <div class="split-bar mt-1" style="opacity:.7">
+        <div class="yes" style="width:{{ split.yes_percent }}%"></div>
+        <div class="no" style="width:{{ split.no_percent }}%"></div>
+      </div>
+      <div class="flex items-center justify-between text-xs text-muted mt-2">
+        <span>参加 {{ prediction.participant_count }}人</span>
+        <span>締切 {{ prediction.deadline|date:"Y-m-d H:i" }}</span>
+      </div>
+    {% endwith %}
+  </div>
+</a>

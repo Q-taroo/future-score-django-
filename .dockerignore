@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+.git/
+.gitignore
+staticfiles/
+/tmp/
+*.sqlite3
+shot.py
+node_modules/

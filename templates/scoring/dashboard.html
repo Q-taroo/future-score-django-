@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load prediction_extras %}
+{% block title %}マイページ | {{ APP_NAME }}{% endblock %}
+{% block content %}
+<div class="container-sm py-8" style="max-width:40rem">
+  <h1 class="text-2xl font-bold">マイページ</h1>
+
+  <div class="grid sm:grid-3 mt-6">
+    <div class="stat-card">
+      <p class="text-xs text-muted">予測スコア</p>
+      <p class="text-xl font-black text-primary">{{ stats.prediction_score }}pt</p>
+    </div>
+    <div class="stat-card">
+      <p class="text-xs text-muted">レーティング</p>
+      <p class="text-xl font-black">{{ stats.rating }}</p>
+    </div>
+    <div class="stat-card">
+      <p class="text-xs text-muted">的中率</p>
+      <p class="text-xl font-black">{{ stats.accuracy|percent }}</p>
+    </div>
+    <div class="stat-card">
+      <p class="text-xs text-muted">予測回数</p>
+      <p class="text-xl font-black">{{ stats.total_predictions }}件</p>
+    </div>
+    <div class="stat-card">
+      <p class="text-xs text-muted">連続的中</p>
+      <p class="text-xl font-black">{{ stats.current_streak }}</p>
+    </div>
+    <div class="stat-card">
+      <p class="text-xs text-muted">AIに勝った回数</p>
+      <p class="text-xl font-black">{{ stats.ai_beat_count }}</p>
+    </div>
+  </div>
+
+  <div class="mt-8">
+    <h2 class="text-lg font-bold mb-3">月別的中率</h2>
+    <div class="card" style="padding:1rem">
+      {% for m in monthly_accuracy %}
+        <div class="flex items-center mt-2" style="gap:.75rem">
+          <span class="text-xs text-muted" style="width:4.5rem">{{ m.month }}</span>
+          <div class="split-bar" style="flex:1; height:.75rem">
+            <div class="yes" style="width:{{ m.accuracy }}%"></div>
+          </div>
+          <span class="text-xs font-semibold" style="width:2.5rem; text-align:right">{{ m.accuracy }}%</span>
+        </div>
+      {% empty %}
+        <p class="empty-state">まだ確定した予測がありません。</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="mt-8">
+    <h2 class="text-lg font-bold mb-3">累積スコア推移</h2>
+    <div class="card" style="padding:1rem; overflow-x:auto">
+      {% if cumulative_score %}
+        <div class="flex items-end" style="gap:.375rem; height:8rem">
+          {% for p in cumulative_score %}
+            <div class="flex flex-col items-center" style="gap:.25rem; min-width:1.25rem" title="{{ p.date }}: {{ p.score }}pt">
+              <div style="width:.875rem; background:var(--primary); border-radius:.25rem 0.25rem 0 0; height:{{ p.score|floatformat:0 }}px; max-height:6rem"></div>
+            </div>
+          {% endfor %}
+        </div>
+        <p class="text-xs text-muted mt-3">最新スコア: <strong class="text-primary">{{ cumulative_score|last|get_item:"score" }}pt</strong></p>
+      {% else %}
+        <p class="empty-state">まだスコア履歴がありません。</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
