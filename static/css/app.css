@@ -181,3 +181,23 @@ h1,h2,h3 { margin: 0; }
 }
 .verification-icon.success { background: rgba(16,185,129,.12); color: #047857; }
 .verification-icon.error { background: rgba(225,29,72,.1); color: var(--no); }
+
+.tutorial-promo-wrap { padding-top: 2rem; }
+.tutorial-promo {
+  position: relative; display: block; overflow: hidden; border-radius: var(--radius);
+  border: 1px solid var(--border); background: #fff;
+  box-shadow: 0 8px 28px rgba(17,24,39,.08); transition: transform .2s, box-shadow .2s;
+}
+.tutorial-promo:hover { transform: translateY(-2px); box-shadow: 0 14px 36px rgba(79,70,229,.16); }
+.tutorial-promo:focus-visible { outline: 3px solid rgba(79,70,229,.35); outline-offset: 3px; }
+.tutorial-promo img { display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: cover; }
+.tutorial-promo-label {
+  position: absolute; right: 1rem; bottom: 1rem; padding: .65rem 1rem;
+  border-radius: 999px; background: rgba(17,24,39,.9); color: #fff;
+  font-size: .8rem; font-weight: 700; backdrop-filter: blur(6px);
+}
+@media (max-width: 640px) {
+  .tutorial-promo-wrap { padding-top: 1.25rem; }
+  .tutorial-promo { border-radius: .75rem; }
+  .tutorial-promo-label { right: .65rem; bottom: .65rem; padding: .5rem .75rem; font-size: .72rem; }
+}

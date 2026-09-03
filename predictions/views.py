@@ -55,6 +55,10 @@ def home(request):
     )
 
 
+def tutorial(request):
+    return render(request, "predictions/tutorial.html")
+
+
 def prediction_list(request):
     close_expired_predictions()
     category = request.GET.get("category")

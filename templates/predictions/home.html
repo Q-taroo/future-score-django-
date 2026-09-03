@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load prediction_extras %}
+{% load prediction_extras static %}
 {% block content %}
 <section class="hero">
   <div class="container text-center py-14">
@@ -17,6 +17,13 @@
       ※ FUTURE SCOREは予測・情報分析サービスです。投資助言や金銭を賭ける機能は提供していません。
     </p>
   </div>
+</section>
+
+<section class="container tutorial-promo-wrap">
+  <a class="tutorial-promo" {% if NOTE_TUTORIAL_URL %}href="{{ NOTE_TUTORIAL_URL }}" target="_blank" rel="noopener noreferrer"{% else %}href="{% url 'predictions:tutorial' %}"{% endif %} aria-label="FUTURE SCOREの使い方ガイドを読む">
+    <img src="{% static 'img/tutorial/guide-banner.svg' %}" alt="FUTURE SCORE 使い方ガイド はじめてでも3分でわかる" loading="lazy">
+    <span class="tutorial-promo-label">画像をタップして使い方を見る <span aria-hidden="true">↗</span></span>
+  </a>
 </section>
 
 <section class="container py-8">

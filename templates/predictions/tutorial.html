@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}使い方ガイド | {{ APP_NAME }}{% endblock %}
+{% block content %}
+<div class="container-sm py-14" style="max-width:48rem">
+  <h1 class="text-2xl font-black text-center">FUTURE SCORE 使い方ガイド</h1>
+  <p class="text-muted text-center mt-3">登録から予測、結果・ランキングの確認まで、3ステップで始められます。</p>
+
+  <section class="card mt-8" style="padding:1.5rem">
+    <h2 class="text-xl font-bold text-primary">STEP 1　登録する</h2>
+    <p class="text-sm text-muted mt-3">「新規登録」からユーザー名、メールアドレス、パスワード、確認用パスワードを入力します。認証メール導入後は、届いたURLを24時間以内に開くと登録完了です。</p>
+    <a href="{% url 'accounts:register' %}" class="btn btn-primary mt-4">新規登録へ</a>
+  </section>
+
+  <section class="card mt-6" style="padding:1.5rem">
+    <h2 class="text-xl font-bold text-primary">STEP 2　予測に参加する</h2>
+    <p class="text-sm text-muted mt-3">「予測一覧」から気になるテーマを選び、内容と締切を確認します。起こると思えばYES、起こらないと思えばNOを選択してください。</p>
+    <a href="{% url 'predictions:list' %}" class="btn btn-primary mt-4">予測一覧へ</a>
+  </section>
+
+  <section class="card mt-6" style="padding:1.5rem">
+    <h2 class="text-xl font-bold text-primary">STEP 3　結果・ランキングを見る</h2>
+    <p class="text-sm text-muted mt-3">結果確定後、マイページで的中数・的中率・スコア・バッジを確認できます。ランキングでは、ほかの参加者との成績を比較できます。</p>
+    <a href="{% url 'scoring:ranking' %}" class="btn btn-primary mt-4">ランキングへ</a>
+  </section>
+
+  <p class="text-xs text-muted mt-8">FUTURE SCOREは予測・情報分析サービスです。投資助言や金銭を賭ける機能は提供していません。</p>
+</div>
+{% endblock %}

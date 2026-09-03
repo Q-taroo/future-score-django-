@@ -37,6 +37,7 @@ if render_origin and render_origin not in CSRF_TRUSTED_ORIGINS:
     CSRF_TRUSTED_ORIGINS.append(render_origin)
 
 APP_URL = os.environ.get("APP_URL", "http://localhost:8000")
+NOTE_TUTORIAL_URL = os.environ.get("NOTE_TUTORIAL_URL", "").strip()
 EMAIL_VERIFICATION_ENABLED = env_bool("EMAIL_VERIFICATION_ENABLED", False)
 EMAIL_VERIFICATION_MAX_AGE = int(os.environ.get("EMAIL_VERIFICATION_MAX_AGE", "86400"))
 RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "")
