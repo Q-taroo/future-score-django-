@@ -2,33 +2,47 @@
 {% load prediction_extras static %}
 {% block content %}
 <section class="hero">
-  <div class="container text-center py-14">
-    <p class="font-semibold text-primary text-sm mb-3">「AIより未来を当てられるか？」</p>
-    <h1 class="font-black" style="font-size:2rem; line-height:1.2">未来を予測して、<br>AIと競おう。</h1>
-    <p class="text-sm text-muted mt-4" style="max-width:36rem; margin-left:auto; margin-right:auto">
-      金融政策、為替、株式市場…未来のイベントについてAI・世論とあなたの予測を比較。
-      結果確定後の的中率で、あなたの予測力を測定・ランキングします。
-    </p>
-    <div class="flex items-center justify-center gap-3 mt-6">
-      <a href="{% url 'predictions:list' %}" class="btn btn-primary btn-lg">予測する</a>
-      <a href="{% url 'scoring:ranking' %}" class="btn btn-outline btn-lg">ランキングを見る</a>
+  <div class="container hero-layout">
+    <div class="hero-copy">
+      <p class="eyebrow"><span aria-hidden="true">✦</span> THE FUTURE STARTS WITH A QUESTION</p>
+      <h1>未来を考えるって、<br><span>ちょっと楽しい。</span></h1>
+      <p class="hero-description">ニュースの「この先どうなる？」を、あなたの予測に。<br>自分で考え、みんなと比べ、結果から学ぶ。<br>未来を見る、新しい習慣をはじめよう。</p>
+      <div class="hero-actions">
+        <a href="{% url 'predictions:list' %}" class="btn btn-primary btn-lg">気になる未来を探す <span aria-hidden="true">→</span></a>
+        {% if not user.is_authenticated %}<a href="{% url 'accounts:register' %}" class="btn btn-outline btn-lg">新規登録する</a>{% else %}<a href="{% url 'scoring:me_dashboard' %}" class="btn btn-outline btn-lg">自分の予測を振り返る</a>{% endif %}
+      </div>
+      <p class="hero-note">まずは見るだけでも。予測は YES / NO から。</p>
     </div>
-    <p class="text-xs text-muted mt-4">
-      ※ FUTURE SCOREは予測・情報分析サービスです。投資助言や金銭を賭ける機能は提供していません。
-    </p>
+    <div class="future-preview" aria-label="予測の楽しみ方の紹介。実際の投票画面ではありません。">
+      <div class="preview-orbit" aria-hidden="true"></div>
+      <span class="preview-spark" aria-hidden="true">✦</span>
+      <div class="preview-card">
+        <p class="eyebrow">YOUR NEXT QUESTION</p>
+        <span class="badge badge-warning">たとえば、こんな未来</span>
+        <h2>次のニュースを、<br>あなたはどう読む？</h2>
+        <div class="preview-options" aria-hidden="true"><span>YES <b>↗</b></span><span>NO <b>↘</b></span></div>
+        <p>正解を急がず、まずは自分の視点から。</p>
+      </div>
+      <div class="preview-caption"><span aria-hidden="true">✧</span> 予測が、学びに変わる。</div>
+    </div>
   </div>
 </section>
 
+<section class="container discovery-steps" aria-label="楽しみ方の3ステップ">
+  <div><span class="step-number">01</span><div><h2>気になる未来を選ぶ</h2><p>経済や社会の「どうなる？」を発見。</p></div></div>
+  <div><span class="step-number">02</span><div><h2>自分の予測を残す</h2><p>YES / NO で、あなたの考えを記録。</p></div></div>
+  <div><span class="step-number">03</span><div><h2>結果から発見する</h2><p>振り返るたび、自分の視点が広がる。</p></div></div>
+</section>
+
 <section class="container tutorial-promo-wrap">
-  <a class="tutorial-promo" {% if NOTE_TUTORIAL_URL %}href="{{ NOTE_TUTORIAL_URL }}" target="_blank" rel="noopener noreferrer"{% else %}href="{% url 'predictions:tutorial' %}"{% endif %} aria-label="FUTURE SCOREの使い方ガイドを読む">
-    <img src="{% static 'img/tutorial/guide-banner.svg' %}" width="1200" height="630" alt="FUTURE SCORE 使い方ガイド はじめてでも3分でわかる" loading="lazy">
-    <span class="tutorial-promo-label">画像をタップして使い方を見る <span aria-hidden="true">↗</span></span>
+  <a class="guide-strip" {% if NOTE_TUTORIAL_URL %}href="{{ NOTE_TUTORIAL_URL }}" target="_blank" rel="noopener noreferrer"{% else %}href="{% url 'predictions:tutorial' %}"{% endif %}>
+    <span class="guide-symbol" aria-hidden="true">✦</span><span><strong>はじめての FUTURE SCORE</strong><small>予測の楽しみ方を、3ステップで。</small></span><span class="guide-action">使い方を見る <span aria-hidden="true">→</span></span>
   </a>
 </section>
 
 <section class="container py-8">
   <div class="flex items-center justify-between mb-4">
-    <h2 class="text-xl font-bold">今日の注目予測</h2>
+    <div><p class="eyebrow">EXPLORE THE POSSIBILITIES</p><h2 class="text-xl font-bold">あなたが気になる未来は？</h2></div>
     <a href="{% url 'predictions:list' %}" class="text-sm font-medium text-primary">すべて見る →</a>
   </div>
   <div class="grid sm:grid-3">
@@ -38,6 +52,7 @@
       <p class="empty-state">現在表示できる予測がありません。</p>
     {% endfor %}
   </div>
+  <p class="text-xs text-muted">試験運用中：デモの予測・参加データを含みます。予測は将来の結果を保証するものではありません。</p>
 </section>
 
 <section class="container" style="padding-bottom:4rem">
