@@ -37,6 +37,14 @@ if render_origin and render_origin not in CSRF_TRUSTED_ORIGINS:
     CSRF_TRUSTED_ORIGINS.append(render_origin)
 
 APP_URL = os.environ.get("APP_URL", "http://localhost:8000")
+EMAIL_VERIFICATION_ENABLED = env_bool("EMAIL_VERIFICATION_ENABLED", False)
+EMAIL_VERIFICATION_MAX_AGE = int(os.environ.get("EMAIL_VERIFICATION_MAX_AGE", "86400"))
+RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "")
+RESEND_FROM_EMAIL = os.environ.get("RESEND_FROM_EMAIL", "")
+if EMAIL_VERIFICATION_ENABLED and (not RESEND_API_KEY or not RESEND_FROM_EMAIL):
+    raise RuntimeError(
+        "EMAIL_VERIFICATION_ENABLED requires RESEND_API_KEY and RESEND_FROM_EMAIL"
+    )
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -152,11 +160,15 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 SESSION_COOKIE_SAMESITE = "Lax"
 CSRF_COOKIE_SAMESITE = "Lax"
 SECURE_BROWSER_XSS_FILTER = True
+SECURE_REFERRER_POLICY = "same-origin"
 X_FRAME_OPTIONS = "DENY"
+SESSION_COOKIE_HTTPONLY = True
 if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_SSL_REDIRECT = env_bool("SECURE_SSL_REDIRECT", False)
+    SECURE_HSTS_SECONDS = int(os.environ.get("SECURE_HSTS_SECONDS", "3600"))
 
 # --- AI Prediction Service (spec §17/§34) ---------------------------------------
 AI_PROVIDER = os.environ.get("AI_PROVIDER", "MOCK").upper()

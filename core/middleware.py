@@ -7,6 +7,7 @@ from core.rate_limit import check_rate_limit, client_ip
 RATE_LIMITED_PATHS = {
     "/accounts/register/": (5, 60),
     "/accounts/login/": (10, 60),
+    "/accounts/resend-verification/": (3, 900),
 }
 RATE_LIMITED_PREFIXES = {
     "/predictions/vote/": (30, 60),

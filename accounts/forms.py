@@ -2,6 +2,8 @@ import re
 
 from django import forms
 from django.contrib.auth import get_user_model
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 
 User = get_user_model()
 
@@ -31,6 +33,11 @@ class RegisterForm(forms.Form):
         confirmation = cleaned_data.get("password_confirmation")
         if password and confirmation and password != confirmation:
             self.add_error("password_confirmation", "パスワードが一致しません")
+        elif password:
+            try:
+                validate_password(password)
+            except ValidationError as error:
+                self.add_error("password", error)
         return cleaned_data
 
     def clean_username(self):
@@ -43,7 +50,8 @@ class RegisterForm(forms.Form):
 
     def clean_email(self):
         email = self.cleaned_data["email"]
-        if User.objects.filter(email=email).exists():
+        email = email.strip().lower()
+        if User.objects.filter(email__iexact=email).exists():
             raise forms.ValidationError("このメールアドレスは既に登録されています")
         return email
 

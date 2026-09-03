@@ -174,3 +174,10 @@ h1,h2,h3 { margin: 0; }
 .toast-error { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
 
 .empty-state { border: 1px dashed var(--border); border-radius: var(--radius); padding: 3rem 1rem; text-align: center; font-size: .875rem; color: var(--muted); }
+.verification-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 4rem; height: 4rem; border-radius: 999px;
+  background: rgba(79,70,229,.1); color: var(--primary); font-size: 2rem; font-weight: 800;
+}
+.verification-icon.success { background: rgba(16,185,129,.12); color: #047857; }
+.verification-icon.error { background: rgba(225,29,72,.1); color: var(--no); }

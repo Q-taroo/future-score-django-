@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models.functions import Lower
 
 
 class User(AbstractUser):
@@ -20,6 +21,13 @@ class User(AbstractUser):
 
     class Meta:
         indexes = [models.Index(fields=["role"])]
+        constraints = [
+            models.UniqueConstraint(
+                Lower("email"),
+                condition=~models.Q(email=""),
+                name="accounts_user_email_ci_unique",
+            )
+        ]
 
     def __str__(self) -> str:
         return self.username

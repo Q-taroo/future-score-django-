@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}メール認証結果 | {{ APP_NAME }}{% endblock %}
+{% block content %}
+<div class="container-sm py-14" style="max-width:36rem">
+  <section class="card text-center" style="padding:3rem 2rem">
+    {% if verified %}
+      <div class="verification-icon success" aria-hidden="true">✓</div>
+      <h1 class="text-2xl font-bold mt-4">認証が完了しました</h1>
+      <p class="text-muted mt-4">メールアドレスを確認しました。FUTURE SCOREをご利用いただけます。</p>
+      <a href="{% url 'accounts:login' %}" class="btn btn-primary btn-lg mt-8" style="width:100%">ログインする</a>
+    {% else %}
+      <div class="verification-icon error" aria-hidden="true">!</div>
+      <h1 class="text-2xl font-bold mt-4">認証リンクを確認できません</h1>
+      <p class="text-muted mt-4">リンクが無効か、24時間の有効期限を過ぎています。登録画面からもう一度お試しください。</p>
+      <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-lg mt-8" style="width:100%">新規登録へ戻る</a>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}
