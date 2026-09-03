@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}新規登録 | {{ APP_NAME }}{% endblock %}
 {% block content %}
 <div class="container-sm py-14" style="max-width:24rem">
@@ -7,7 +8,7 @@
     FUTURE SCOREは予測・情報分析サービスです。登録・利用は無料で、金銭のやり取りは一切発生しません。
   </p>
 
-  <form method="post" class="card mt-6" style="padding:1.5rem">
+  <form method="post" class="card mt-6" style="padding:1.5rem" autocomplete="on">
     {% csrf_token %}
     <div class="field">
       <label class="field-label" for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
@@ -21,8 +22,19 @@
     </div>
     <div class="field">
       <label class="field-label" for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
-      {{ form.password }}
+      <div class="password-field">
+        {{ form.password }}
+        <button type="button" class="password-toggle" data-password-toggle="{{ form.password.id_for_label }}" aria-label="パスワードを表示" aria-pressed="false">表示</button>
+      </div>
       {% if form.password.errors %}<p class="text-no" style="font-size:.75rem">{{ form.password.errors.0 }}</p>{% endif %}
+    </div>
+    <div class="field">
+      <label class="field-label" for="{{ form.password_confirmation.id_for_label }}">{{ form.password_confirmation.label }}</label>
+      <div class="password-field">
+        {{ form.password_confirmation }}
+        <button type="button" class="password-toggle" data-password-toggle="{{ form.password_confirmation.id_for_label }}" aria-label="確認用パスワードを表示" aria-pressed="false">表示</button>
+      </div>
+      {% if form.password_confirmation.errors %}<p class="text-no" style="font-size:.75rem">{{ form.password_confirmation.errors.0 }}</p>{% endif %}
     </div>
     <button type="submit" class="btn btn-primary btn-lg mt-2" style="width:100%">登録する</button>
   </form>
@@ -32,3 +44,4 @@
   </p>
 </div>
 {% endblock %}
+{% block extra_scripts %}<script src="{% static 'js/register.js' %}" defer></script>{% endblock %}

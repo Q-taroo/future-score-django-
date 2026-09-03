@@ -133,6 +133,14 @@ h1,h2,h3 { margin: 0; }
 }
 .field textarea { height: auto; padding: .5rem .75rem; min-height: 6rem; }
 .field .errors { color: var(--no); font-size: .75rem; margin-top: .25rem; }
+.password-field { position: relative; }
+.password-field input { padding-right: 4rem; width: 100%; }
+.password-toggle {
+  position: absolute; right: .5rem; top: 50%; transform: translateY(-50%);
+  border: 0; background: transparent; color: var(--primary); cursor: pointer;
+  font-weight: 600; padding: .25rem .4rem;
+}
+.password-toggle:focus-visible { outline: 2px solid var(--primary); border-radius: .25rem; }
 .field-checkbox { display: flex; align-items: center; gap: .5rem; font-size: .875rem; font-weight: 500; }
 
 /* Pills / filter chips */
