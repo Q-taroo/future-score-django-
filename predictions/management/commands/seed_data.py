@@ -9,6 +9,7 @@ Idempotent-ish: re-running wipes and recreates seed-owned rows so local
 dev/demo environments can be reset with one command.
 """
 
+import os
 import random
 from datetime import timedelta
 
@@ -119,10 +120,6 @@ class Command(BaseCommand):
         refresh_ranking()
 
         print(f"Seeded {len(predictions)} predictions, {len(all_users) + 1} users.")
-        print("Login credentials:")
-        print("  admin@futurescore.local / Admin1234!")
-        print("  demo@futurescore.local / Demo1234!")
-        print("  predictor_01@futurescore.local .. predictor_22@futurescore.local / Password1!")
 
     def _wipe(self):
         UserPredictionHistory.objects.all().delete()
@@ -137,13 +134,18 @@ class Command(BaseCommand):
 
     def _create_admin(self):
         admin = User.objects.create_user(
-            username="admin", email="admin@futurescore.local", password="Admin1234!", role=User.Role.ADMIN
+            username="admin",
+            email="admin@futurescore.local",
+            password=os.environ.get("SEED_ADMIN_PASSWORD"),
+            role=User.Role.ADMIN,
         )
         UserStats.objects.get_or_create(user=admin)
         return admin
 
     def _create_demo(self):
-        demo = User.objects.create_user(username="demo", email="demo@futurescore.local", password="Demo1234!")
+        demo = User.objects.create_user(
+            username="demo", email="demo@futurescore.local", password=os.environ.get("SEED_DEMO_PASSWORD")
+        )
         UserStats.objects.get_or_create(user=demo)
         return demo
 
@@ -152,7 +154,9 @@ class Command(BaseCommand):
         for i in range(1, 23):
             username = f"predictor_{i:02d}"
             user = User.objects.create_user(
-                username=username, email=f"{username}@futurescore.local", password="Password1!"
+                username=username,
+                email=f"{username}@futurescore.local",
+                password=os.environ.get("SEED_PREDICTOR_PASSWORD"),
             )
             UserStats.objects.get_or_create(user=user)
             users.append(user)
