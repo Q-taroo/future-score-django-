@@ -190,7 +190,7 @@ h1,h2,h3 { margin: 0; }
 }
 .tutorial-promo:hover { transform: translateY(-2px); box-shadow: 0 14px 36px rgba(79,70,229,.16); }
 .tutorial-promo:focus-visible { outline: 3px solid rgba(79,70,229,.35); outline-offset: 3px; }
-.tutorial-promo img { display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: cover; }
+.tutorial-promo img { display: block; width: 100%; height: auto; aspect-ratio: 1200 / 630; object-fit: contain; }
 .tutorial-promo-label {
   position: absolute; right: 1rem; bottom: 1rem; padding: .65rem 1rem;
   border-radius: 999px; background: rgba(17,24,39,.9); color: #fff;
