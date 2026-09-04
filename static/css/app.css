@@ -86,6 +86,8 @@ h1,h2,h3 { margin: 0; }
 .site-header { border-bottom: 1px solid var(--border); background: rgba(247,248,251,.92); backdrop-filter: blur(6px); }
 .site-header nav a { font-size: .875rem; font-weight: 500; color: var(--foreground); }
 .site-header nav a:hover { color: var(--primary); }
+.primary-nav a { display:inline-flex; align-items:center; gap:.4rem; min-height:2.75rem; white-space:nowrap; }
+.nav-icon { width:1.15rem; height:1.15rem; flex:none; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
 .brand { font-weight: 800; letter-spacing: -0.02em; }
 .brand .accent { color: var(--primary); }
 
@@ -241,7 +243,7 @@ button, input, select, textarea { font: inherit; }
 .guide-action { margin-left:auto; font-size:.85rem; font-weight:700; white-space:nowrap; }
 @media(max-width:900px) {
   .site-header nav { order:3; width:100%; overflow-x:auto; padding-bottom:.25rem; }
-  .site-header nav a { white-space:nowrap; min-height:2rem; display:flex; align-items:center; }
+  .site-header nav a { white-space:nowrap; min-height:2.5rem; display:flex; align-items:center; }
   .hero-layout { grid-template-columns:1fr; gap:1.5rem; padding-top:2.5rem; padding-bottom:2.5rem; }
   .future-preview { width:100%; max-width:28rem; margin:0 auto; }
   .discovery-steps { grid-template-columns:1fr; }

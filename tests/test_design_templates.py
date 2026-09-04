@@ -31,3 +31,10 @@ class DesignTemplateTests(SimpleTestCase):
     def test_no_fake_live_numbers(self):
         self.assertIn('実際の投票画面ではありません', self.render_home())
         self.assertIn('デモの予測・参加データを含みます', self.render_home())
+
+    def test_main_navigation_has_home_and_labeled_icons(self):
+        html = self.render_home()
+        self.assertIn('aria-label="メインメニュー"', html)
+        for label in ('ホーム', '予測一覧', 'ランキング', '使い方'):
+            self.assertIn(f'<span>{label}</span>', html)
+        self.assertEqual(html.count('class="nav-icon"'), 4)
